@@ -12,6 +12,7 @@ python-decouple = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-script = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"

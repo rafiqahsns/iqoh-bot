@@ -1,10 +1,11 @@
 # mybot/app.py
 import os
-from models import *
+from models import birthdays
 from decouple import config
 from flask import (
     Flask, request, abort
 )
+from flask_sqlalchemy import SQLAlchemy
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -13,6 +14,13 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 app = Flask(__name__)
+
+# set db
+app.config['SQLALCHEMY_DATABASE_URI']           = os.environ.get('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']    = False
+
+db = SQLAlchemy(app)
+
 # get LINE_CHANNEL_ACCESS_TOKEN from your environment variable
 line_bot_api = LineBotApi(
     config("LINE_CHANNEL_ACCESS_TOKEN",
@@ -78,5 +86,4 @@ def handle_text_message(event):
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-    manager.run()
-    db.create_all()
+    
