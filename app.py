@@ -14,13 +14,13 @@ from linebot.models import (
 app = Flask(__name__)
 # get LINE_CHANNEL_ACCESS_TOKEN from your environment variable
 line_bot_api = LineBotApi(
-    config("5r5JMAD8idgh2/+xLvMJljc/6y60VEdqfAG1ghjkMCPPutBR+TbbW7ym8cE4UV5ew0sSsLJyOteTVF+FZ581vHkcDuenLfdxorjKb2GoJNPd270iL688WspS8Zp/tLCAML+l2u63z8W3Ev6e9ijGHgdB04t89/1O/w1cDnyilFU=",
-           default=os.environ.get('5r5JMAD8idgh2/+xLvMJljc/6y60VEdqfAG1ghjkMCPPutBR+TbbW7ym8cE4UV5ew0sSsLJyOteTVF+FZ581vHkcDuenLfdxorjKb2GoJNPd270iL688WspS8Zp/tLCAML+l2u63z8W3Ev6e9ijGHgdB04t89/1O/w1cDnyilFU='))
+    config("LINE_CHANNEL_ACCESS_TOKEN",
+           default=os.environ.get('LINE_ACCESS_TOKEN'))
 )
 # get LINE_CHANNEL_SECRET from your environment variable
 handler = WebhookHandler(
-    config("eea0c199a2535f0c8f8db1e2ffcfc979",
-           default=os.environ.get('eea0c199a2535f0c8f8db1e2ffcfc979'))
+    config("LINE_CHANNEL_SECRET",
+           default=os.environ.get('LINE_CHANNEL_SECRET'))
 )
 
 
@@ -46,16 +46,10 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    if event.message.text == "hai":
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="hullo")
-        )
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=event.message.text)
-        )
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=event.message.text)
+    )
 
 
 
