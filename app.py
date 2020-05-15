@@ -1,5 +1,6 @@
 # mybot/app.py
 import os
+from models import *
 from decouple import config
 from flask import (
     Flask, request, abort
@@ -38,6 +39,19 @@ def callback():
         abort(400)
 
     return 'OK'
+def save_birthday(detail):
+    birth_date = detail[0]
+    name = " ".join(detail[1:])
+    add_data = birthdays(
+            name = name,
+            birth_date = birth_date
+        )
+    try:
+        db.session.add(add_data)
+        db.session.commit()
+        return('success')
+    except:
+        return('failed')
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -49,12 +63,11 @@ def handle_text_message(event):
             TextSendMessage(text="hai qoh")
         )
     elif command == '/bday':
-        name = event.message.text.split(' ')[1]
-        birthday = event.message.text.split(' ')[2]
-        wish = "happy birthday " + name + " " + birthday
+        detail = event.message.text.split(' ')[1:]
+        response = save_birthday(detail)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=wish)
+            TextSendMessage(text=response)
         )
     else:
         line_bot_api.reply_message(

@@ -9,6 +9,9 @@ verify_ssl = true
 flask = "*"
 line-bot-sdk = "*"
 python-decouple = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-script = "*"
 
 [requires]
 python_version = "3.7"
