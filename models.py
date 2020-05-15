@@ -25,6 +25,8 @@ class birthdays(db.Model):
         self.name = name
         self.birth_date = birth_date
 
+db.create_all()
+db.session.commit()
 
 if __name__ == '__main__':
     manager.run()
