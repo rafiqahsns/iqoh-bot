@@ -17,7 +17,7 @@ manager.add_command('db', MigrateCommand)
 class birthdays(db.Model):
     __tablename__ = 'birthdays'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50))
     birth_date = db.Column(db.DATE)
 
