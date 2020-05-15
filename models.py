@@ -25,8 +25,3 @@ class birthdays(db.Model):
     def __init__(self, name, birth_date):
         self.name = name
         self.birth_date = birth_date
-
-
-if __name__ == '__main__':
-    manager.run()
-    db.create_all()
