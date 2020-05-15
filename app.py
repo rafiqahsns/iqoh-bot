@@ -41,14 +41,22 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    
-    if event.message.text == "halo":
+
+    command = event.message.text.split(' ')[0]
+    if command == "halo":
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="hai qoh")
         )
+    elif command == '/bday':
+        name = event.message.text.split(' ')[1]
+        birthday = event.message.text.split(' ')[2]
+        wish = "happy birthday " + name + " " + birthday
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=wish)
+        )
     else:
-        first = event.message.text.split(' ')[1]
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=first)
