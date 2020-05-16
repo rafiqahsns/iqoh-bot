@@ -62,8 +62,24 @@ def save_event(detail):
         )
     db.session.add(add_data)
     db.session.commit()
+    
+def delete_event(detail):
+    name = " ".join(detail)
+    delete_events = events.__table__.delete().where(events.name == name)
+    db.session.execute(delete_events)
+    db.session.commit()
 
-def todaybday():
+def save_event(detail):
+    date = detail[0]
+    name = " ".join(detail[1:])
+    add_data = events(
+            name = name,
+            date = date
+        )
+    db.session.add(add_data)
+    db.session.commit()
+
+def today_birthday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
                                 extract('day', birthdays.birth_date) == datetime.date.today().day).all()
     if result != []:
@@ -74,7 +90,7 @@ def todaybday():
         birthday = ""
     return(birthday)
 
-def todayevent():
+def today_event():
     result = events.query.filter(extract('month', events.date) == datetime.date.today().month,
                                 extract('day', events.date) == datetime.date.today().day).all()
     if result != []:
@@ -108,9 +124,16 @@ def handle_text_message(event):
             event.reply_token,
             TextSendMessage(text="Event added!")
         )
+    elif command == '/delev':
+        detail = event.message.text.split(' ')[1:]
+        delete_event(detail)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="Events deleted!")
+        )
     elif command == '/today':
-        bday = todaybday()
-        events = todayevent()
+        bday = today_birthday()
+        events = today_event()
         if bday == "" and events == "":
             line_bot_api.reply_message(
                 event.reply_token,
