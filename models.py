@@ -29,7 +29,7 @@ class quotes(db.Model):
     __tablename__ = 'quotes'
 
     id = db.Column(db.Integer, primary_key=True)
-    quote = db.Column(db.String(4294000000))
+    quote = db.Column(db.LONGTEXT)
 
     def __init__(self, name, date):
         self.quote = quote
@@ -38,7 +38,7 @@ class notes(db.Model):
     __tablename__ = 'notes'
 
     id = db.Column(db.Integer, primary_key=True)
-    note = db.Column(db.String(4294000000))
+    note = db.Column(db.LONGTEXT)
 
     def __init__(self, name, date):
         self.note = note
