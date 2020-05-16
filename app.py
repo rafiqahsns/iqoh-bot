@@ -80,7 +80,7 @@ def todayevent():
     if result != []:
         event = "It's\n"
         for thing in result:
-            event = event + thing.name + ' (' + thing.date + ')' + "\n"
+            event = event + thing.name + ' (' + thing.date.strftime('%d/%m/%Y') + ')' + "\n"
     else:
         event = ""
     return(event)
