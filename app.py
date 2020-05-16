@@ -46,12 +46,8 @@ def save_birthday(detail):
             name = name,
             birth_date = birth_date
         )
-    try:
-        db.session.add(add_data)
-        db.session.commit()
-        return('success')
-    except:
-        return('failed')
+    db.session.add(add_data)
+    db.session.commit()
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -64,10 +60,10 @@ def handle_text_message(event):
         )
     elif command == '/bday':
         detail = event.message.text.split(' ')[1:]
-        response = save_birthday(detail)
+        save_birthday(detail)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=response)
+            TextSendMessage(text="response")
         )
     else:
         line_bot_api.reply_message(
