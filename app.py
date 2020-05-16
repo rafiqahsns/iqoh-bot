@@ -54,8 +54,8 @@ def save_birthday(detail):
     db.session.commit()
 
 def todaybday():
-    result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.today().month,
-                                extract('day', birthdays.birth_date) == datetime.today().day).all()
+    result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
+                                extract('day', birthdays.birth_date) == datetime.date.today().day).all()
     return(result)
 
 @handler.add(MessageEvent, message=TextMessage)
