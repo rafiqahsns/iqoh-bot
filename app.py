@@ -48,17 +48,15 @@ def save_birthday(detail):
     db.session.commit()
 
 def save_quote(detail):
-    quote = detail[10:]
     add_data = quotes(
-            quote = quote
+            quote = detail
         )
     db.session.add(add_data)
     db.session.commit()
 
 def save_note(detail):
-    note = detail[9:]
     add_data = notes(
-            note = note
+            note = detail
         )
     db.session.add(add_data)
     db.session.commit()
@@ -125,7 +123,8 @@ def handle_text_message(event):
         
     # Quote Commands
     elif command == "/addquote":
-        save_quote(event.message.text)
+        print(event.message.text[10:])
+        save_quote(event.message.text[10:])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="Quote added!")
@@ -133,7 +132,7 @@ def handle_text_message(event):
 
     # Note Commands
     elif command == "/addnote":
-        save_note(event.message.text)
+        save_note(event.message.text[9:])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="Note added!")
