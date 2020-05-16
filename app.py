@@ -71,8 +71,19 @@ def todaybday():
         for person in result:
             birthday = birthday + person.name +  "'s birthday\n"
     else:
-        birthday = "Nothing Today"
+        birthday = ""
     return(birthday)
+
+def todayevent():
+    result = events.query.filter(extract('month', events.date) == datetime.date.today().month,
+                                extract('day', events.date) == datetime.date.today().day).all()
+    if result != []:
+        event = "It's\n"
+        for thing in result:
+            event = event + thing.name + ' (' + thing.date + ')' + "\n"
+    else:
+        event = ""
+    return(event)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -90,7 +101,7 @@ def handle_text_message(event):
             event.reply_token,
             TextSendMessage(text="Birthday added!")
         )
-    elif command == '/events':
+    elif command == '/event':
         detail = event.message.text.split(' ')[1:]
         save_event(detail)
         line_bot_api.reply_message(
@@ -98,11 +109,33 @@ def handle_text_message(event):
             TextSendMessage(text="Event added!")
         )
     elif command == '/today':
-        result = todaybday()
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=result)
-        )
+        bday = todaybday()
+        event = todayevent()
+        if bday == "" and event == "":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="Nothing Today")
+            )
+        elif bday != "" and event == "":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=bday)
+            )
+        elif bday == "" and event != "":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=event)
+            )
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=bday)
+            )
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=event)
+            )
+
     else:
         line_bot_api.reply_message(
             event.reply_token,
