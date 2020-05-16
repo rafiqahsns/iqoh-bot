@@ -7,6 +7,8 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage,)
 from sqlalchemy import extract
+from sqlalchemy.sql import func
+from sqlalchemy.orm import load_only
 import datetime 
 
 # app = Flask(__name__)
