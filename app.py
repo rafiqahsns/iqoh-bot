@@ -69,6 +69,12 @@ def delete_event(detail):
     db.session.execute(delete_events)
     db.session.commit()
 
+def delete_birthday(detail):
+    name = " ".join(detail)
+    delete_birthdays = birthdays.__table__.delete().where(birthdays.name == name)
+    db.session.execute(delete_birthdays)
+    db.session.commit()
+
 def save_event(detail):
     date = detail[0]
     name = " ".join(detail[1:])
@@ -105,11 +111,35 @@ def today_event():
 def handle_text_message(event):
 
     command = event.message.text.split(' ')[0]
-    if command == "halo":
+    if command.lower() == "halo" or command == "/halo":
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="hai qoh")
+            TextSendMessage(text="hello, me. hope everything's alright right now.")
         )
+    elif command.lower() == "help" or command == "/help":
+        texts="In case you need a reminder\n \
+                \n \
+                General command:\n \
+                /today: returns today's events\n \
+                /halo: casual greetings\n \
+                /imsad: returns positivity stuff\n \
+                \n \
+                Birthday commands:\n \
+                /bday date(yyyy-mm-dd) name: add someone's birthday\n \
+                /delbd name: delete someone's birthday by name\n \
+                \n \
+                Events commands:\n \
+                /event date(yyyy--mm--dd) name: add an event\n \
+                /delev name: delete event by name\n \
+                \n \
+                Positivity commands:\n \
+                /addquote quote: adds a new quote\n"
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=texts)
+        )
+    # Birthdays Commands
+
     elif command == '/bday':
         detail = event.message.text.split(' ')[1:]
         save_birthday(detail)
@@ -117,6 +147,17 @@ def handle_text_message(event):
             event.reply_token,
             TextSendMessage(text="Birthday added!")
         )
+    
+    elif command == '/delbd':
+        detail = event.message.text.split(' ')[1:]
+        delete_birthday(detail)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="Birthday deleted!")
+        )
+
+    # Events Commands    
+    
     elif command == '/event':
         detail = event.message.text.split(' ')[1:]
         save_event(detail)
@@ -124,6 +165,7 @@ def handle_text_message(event):
             event.reply_token,
             TextSendMessage(text="Event added!")
         )
+    
     elif command == '/delev':
         detail = event.message.text.split(' ')[1:]
         delete_event(detail)
@@ -131,6 +173,7 @@ def handle_text_message(event):
             event.reply_token,
             TextSendMessage(text="Events deleted!")
         )
+    
     elif command == '/today':
         bday = today_birthday()
         events = today_event()
