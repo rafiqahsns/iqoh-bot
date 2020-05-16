@@ -1,12 +1,10 @@
 
-<h1 align="center" style="border-bottom: none">
 🤖 Iqoh Bot 🤖
-</h1>
+=================
+
+Personal Line Bot for Moi
 
 ***
-<p align="center">
-Personal Line Bot for Moi
-</p>
 
 Description
 =================
