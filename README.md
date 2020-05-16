@@ -1,9 +1,6 @@
 
 # 🤖 Iqoh Bot 
 
-Personal Line Bot for Moi
-
-
 ## Description
 
 This is a bot i made in Line Messaging App. I create this bot to help me remember events, birthdays, and give encouragements to myself.
