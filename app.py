@@ -1,17 +1,22 @@
 # iqoh-bot/app.py
 import os
+import datetime
+
 from models import *
+
 from decouple import config
+
 from flask import (Flask, request, abort)
+
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import (MessageEvent, TextMessage, TextSendMessage,)
-from sqlalchemy import extract
-from sqlalchemy.sql import func
-from sqlalchemy.orm import load_only
-import datetime 
+from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 
-# app = Flask(__name__)
+from sqlalchemy import extract
+from sqlalchemy.orm import load_only
+from sqlalchemy.sql import func
+
+
 # get LINE_CHANNEL_ACCESS_TOKEN from your environment variable
 line_bot_api = LineBotApi(
     config("LINE_CHANNEL_ACCESS_TOKEN",
@@ -39,6 +44,8 @@ def callback():
 
     return 'OK'
 
+# Birthday Functions
+
 def save_birthday(detail):
     birth_date = detail[0]
     name = " ".join(detail[1:])
@@ -49,49 +56,11 @@ def save_birthday(detail):
     db.session.add(add_data)
     db.session.commit()
 
-def save_quote(detail):
-    add_data = quotes(
-            quote = detail
-        )
-    db.session.add(add_data)
-    db.session.commit()
-
-def save_note(detail):
-    add_data = notes(
-            note = detail
-        )
-    db.session.add(add_data)
-    db.session.commit()
-    
-def delete_event(detail):
-    name = " ".join(detail)
-    delete_events = events.__table__.delete().where(events.name == name)
-    db.session.execute(delete_events)
-    db.session.commit()
-
 def delete_birthday(detail):
     name = " ".join(detail)
     delete_birthdays = birthdays.__table__.delete().where(birthdays.name == name)
     db.session.execute(delete_birthdays)
     db.session.commit()
-
-def save_event(detail):
-    date = detail[0]
-    name = " ".join(detail[1:])
-    add_data = events(
-            name = name,
-            date = date
-        )
-    db.session.add(add_data)
-    db.session.commit()
-
-def random_quote():
-    result = quotes.query.options(load_only('id')).offset(
-            func.floor(func.random() *
-                db.session.query(func.count(quotes.id))
-            )
-            ).limit(1).all()
-    return(result[0].quote)
 
 def today_birthday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
@@ -104,6 +73,24 @@ def today_birthday():
         birthday = ""
     return(birthday)
 
+# Events functions
+
+def save_event(detail):
+    date = detail[0]
+    name = " ".join(detail[1:])
+    add_data = events(
+            name = name,
+            date = date
+        )
+    db.session.add(add_data)
+    db.session.commit()
+
+def delete_event(detail):
+    name = " ".join(detail)
+    delete_events = events.__table__.delete().where(events.name == name)
+    db.session.execute(delete_events)
+    db.session.commit()
+
 def today_event():
     result = events.query.filter(extract('month', events.date) == datetime.date.today().month,
                                 extract('day', events.date) == datetime.date.today().day).all()
@@ -115,22 +102,77 @@ def today_event():
         event = ""
     return(event)
 
+# Quotes Functions
+
+def save_quote(detail):
+    add_data = quotes(
+            quote = detail
+        )
+    db.session.add(add_data)
+    db.session.commit()
+
+def random_quote():
+    # I got this from https://stackoverflow.com/questions/60805/getting-random-row-through-sqlalchemy
+    result = quotes.query.options(load_only('id')).offset(
+            func.floor(func.random() *
+                db.session.query(func.count(quotes.id))
+            )
+            ).limit(1).all()
+    return(result[0].quote)
+
+# Note functions
+
+def save_note(detail):
+    add_data = notes(
+            note = detail
+        )
+    db.session.add(add_data)
+    db.session.commit()
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
 
     command = event.message.text.split(' ')[0]
+
     if command.lower() == "halo" or command == "/halo":
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="hello, me. hope everything's alright right now.")
         )
+
     elif command.lower() == "help" or command == "/help":
         texts="In case you need a reminder\nGeneral command:\n\n/today: returns today's events\n/halo: casual greetings\n/imsad: returns positivity stuff\n\nBirthday commands:\n/bday date(yyyy-mm-dd) name: add someone's birthday\n/delbd name: delete someone's birthday by name\n\nEvents commands:\n/event date(yyyy--mm--dd) name: add an event\n/delev name: delete event by name\n\nPositivity commands:\n/addquote quote: adds a new quote\n\nNote commands:\n/addnote note: add a note\n"
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=texts)
         )
+
+    elif command == '/today':
+        bday = today_birthday()
+        events = today_event()
+        if bday == "" and events == "":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="Nothing Today")
+            )
+        elif bday != "" and events == "":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=bday)
+            )
+        elif bday == "" and events != "":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=events)
+            )
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=(bday+"\n"+events))
+            )
     
+    # Quote Commands
+
     elif command == "/imsad":
         quote = random_quote()
         line_bot_api.reply_message(
@@ -138,7 +180,6 @@ def handle_text_message(event):
             TextSendMessage(text=quote)
         )
         
-    # Quote Commands
     elif command == "/addquote":
         print(event.message.text[10:])
         save_quote(event.message.text[10:])
@@ -148,6 +189,7 @@ def handle_text_message(event):
         )
 
     # Note Commands
+
     elif command == "/addnote":
         save_note(event.message.text[9:])
         line_bot_api.reply_message(
@@ -189,36 +231,6 @@ def handle_text_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="Events deleted!")
-        )
-    
-    elif command == '/today':
-        bday = today_birthday()
-        events = today_event()
-        if bday == "" and events == "":
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="Nothing Today")
-            )
-        elif bday != "" and events == "":
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=bday)
-            )
-        elif bday == "" and events != "":
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=events)
-            )
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=(bday+"\n"+events))
-            )
-
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=event.message.text)
         )
 
 if __name__ == "__main__":
