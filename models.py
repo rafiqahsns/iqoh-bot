@@ -25,6 +25,17 @@ class birthdays(db.Model):
         self.name = name
         self.birth_date = birth_date
 
+class events(db.Model):
+    __tablename__ = 'events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    date = db.Column(db.DATE)
+
+    def __init__(self, name, date):
+        self.name = name
+        self.date = date
+
 if __name__ == '__main__':
     manager.run()
 

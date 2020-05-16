@@ -53,6 +53,16 @@ def save_birthday(detail):
     db.session.add(add_data)
     db.session.commit()
 
+def save_event(detail):
+    date = detail[0]
+    name = " ".join(detail[1:])
+    add_data = events(
+            name = name,
+            date = date
+        )
+    db.session.add(add_data)
+    db.session.commit()
+
 def todaybday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
                                 extract('day', birthdays.birth_date) == datetime.date.today().day).all()
@@ -78,7 +88,14 @@ def handle_text_message(event):
         save_birthday(detail)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="response")
+            TextSendMessage(text="Birthday added!")
+        )
+    elif command == '/events':
+        detail = event.message.text.split(' ')[1:]
+        save_event(detail)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="Event added!")
         )
     elif command == '/today':
         result = todaybday()
