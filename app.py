@@ -110,21 +110,21 @@ def handle_text_message(event):
         )
     elif command == '/today':
         bday = todaybday()
-        event = todayevent()
+        events = todayevent()
         if bday == "" and event == "":
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text="Nothing Today")
             )
-        elif bday != "" and event == "":
+        elif bday != "" and events == "":
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=bday)
             )
-        elif bday == "" and event != "":
+        elif bday == "" and events != "":
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=event)
+                TextSendMessage(text=events)
             )
         else:
             line_bot_api.reply_message(
@@ -133,7 +133,7 @@ def handle_text_message(event):
             )
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=event)
+                TextSendMessage(text=events)
             )
 
     else:
