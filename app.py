@@ -81,10 +81,10 @@ def handle_text_message(event):
             TextSendMessage(text="response")
         )
     elif command == '/today':
-        todaybday()
+        result = todaybday()
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="result")
+            TextSendMessage(text=result)
         )
     else:
         line_bot_api.reply_message(
