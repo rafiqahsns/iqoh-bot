@@ -83,6 +83,15 @@ def save_event(detail):
     db.session.add(add_data)
     db.session.commit()
 
+def random_quote():
+    result = quotes.query.options(load_only('id')).offset(
+            func.floor(func.random() *
+                db.session.query(func.count(quote.id))
+            )
+            ).limit(1).all()
+    print(result.quote)
+    return(result.quote)
+
 def today_birthday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
                                 extract('day', birthdays.birth_date) == datetime.date.today().day).all()
@@ -119,6 +128,13 @@ def handle_text_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=texts)
+        )
+    
+    elif command == "/imsad":
+        quote = random_quote()
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=quote)
         )
         
     # Quote Commands
