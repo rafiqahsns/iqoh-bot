@@ -91,8 +91,7 @@ def random_quote():
                 db.session.query(func.count(quotes.id))
             )
             ).limit(1).all()
-    print(result)
-    return(result.quote)
+    return(result[0].quote)
 
 def today_birthday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
