@@ -88,7 +88,7 @@ def save_event(detail):
 def random_quote():
     result = quotes.query.options(load_only('id')).offset(
             func.floor(func.random() *
-                db.session.query(func.count(quote.id))
+                db.session.query(func.count(quotes.id))
             )
             ).limit(1).all()
     print(result.quote)
