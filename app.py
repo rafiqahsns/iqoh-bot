@@ -12,6 +12,9 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+from sqlalchemy import extract
+import datetime 
+
 # app = Flask(__name__)
 # get LINE_CHANNEL_ACCESS_TOKEN from your environment variable
 line_bot_api = LineBotApi(
@@ -39,6 +42,7 @@ def callback():
         abort(400)
 
     return 'OK'
+
 def save_birthday(detail):
     birth_date = detail[0]
     name = " ".join(detail[1:])
@@ -48,6 +52,11 @@ def save_birthday(detail):
         )
     db.session.add(add_data)
     db.session.commit()
+
+def todaybday():
+    result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.today().month,
+                                extract('day', birthdays.birth_date) == datetime.today().day).all()
+    return(result)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -64,6 +73,12 @@ def handle_text_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="response")
+        )
+    elif command == '/today':
+        result = todaybday()
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=result)
         )
     else:
         line_bot_api.reply_message(
