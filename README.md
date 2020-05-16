@@ -1,5 +1,5 @@
 
-<h1 align="center">
+<h1 align="center" style="border-bottom: none">
 🤖 Iqoh Bot 🤖
 </h1>
 
