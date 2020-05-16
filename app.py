@@ -56,7 +56,7 @@ def save_birthday(detail):
 def todaybday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
                                 extract('day', birthdays.birth_date) == datetime.date.today().day).all()
-    print(result)
+    print(result[1].name)
     # return(result)
 
 @handler.add(MessageEvent, message=TextMessage)
