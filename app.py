@@ -56,7 +56,8 @@ def save_birthday(detail):
 def todaybday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
                                 extract('day', birthdays.birth_date) == datetime.date.today().day).all()
-    return(result)
+    print(result)
+    # return(result)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -75,10 +76,10 @@ def handle_text_message(event):
             TextSendMessage(text="response")
         )
     elif command == '/today':
-        result = todaybday()
+        todaybday()
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=result)
+            TextSendMessage(text="result")
         )
     else:
         line_bot_api.reply_message(
