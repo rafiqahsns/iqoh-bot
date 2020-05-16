@@ -25,11 +25,29 @@ class birthdays(db.Model):
         self.name = name
         self.birth_date = birth_date
 
+class quotes(db.Model):
+    __tablename__ = 'quotes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    quote = db.Column(db.String(4294000000))
+
+    def __init__(self, name, date):
+        self.quote = quote
+
+class notes(db.Model):
+    __tablename__ = 'notes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.String(4294000000))
+
+    def __init__(self, name, date):
+        self.note = note
+
 class events(db.Model):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(1000))
     date = db.Column(db.DATE)
 
     def __init__(self, name, date):

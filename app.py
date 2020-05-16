@@ -53,12 +53,18 @@ def save_birthday(detail):
     db.session.add(add_data)
     db.session.commit()
 
-def save_event(detail):
-    date = detail[0]
-    name = " ".join(detail[1:])
-    add_data = events(
-            name = name,
-            date = date
+def save_quote(detail):
+    quote = detail[10:]
+    add_data = quotes(
+            quote = quote
+        )
+    db.session.add(add_data)
+    db.session.commit()
+
+def save_note(detail):
+    note = detail[9:]
+    add_data = notes(
+            note = note
         )
     db.session.add(add_data)
     db.session.commit()
@@ -117,27 +123,28 @@ def handle_text_message(event):
             TextSendMessage(text="hello, me. hope everything's alright right now.")
         )
     elif command.lower() == "help" or command == "/help":
-        texts="In case you need a reminder\n \
-                \n \
-                General command:\n \
-                /today: returns today's events\n \
-                /halo: casual greetings\n \
-                /imsad: returns positivity stuff\n \
-                \n \
-                Birthday commands:\n \
-                /bday date(yyyy-mm-dd) name: add someone's birthday\n \
-                /delbd name: delete someone's birthday by name\n \
-                \n \
-                Events commands:\n \
-                /event date(yyyy--mm--dd) name: add an event\n \
-                /delev name: delete event by name\n \
-                \n \
-                Positivity commands:\n \
-                /addquote quote: adds a new quote\n"
+        texts="In case you need a reminder\nGeneral command:\n\n/today: returns today's events\n/halo: casual greetings\n/imsad: returns positivity stuff\n\nBirthday commands:\n/bday date(yyyy-mm-dd) name: add someone's birthday\n/delbd name: delete someone's birthday by name\n\nEvents commands:\n/event date(yyyy--mm--dd) name: add an event\n/delev name: delete event by name\n\nPositivity commands:\n/addquote quote: adds a new quote\n\nNote commands:\n/addnote note: add a note\n"
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=texts)
         )
+        
+    # Quote Commands
+    elif command == "/addquote":
+        save_quote(event.message.text)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="Quote added!")
+        )
+
+    # Note Commands
+    elif command == "/addnote":
+        save_note(event.message.text)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="Note added!")
+        )
+
     # Birthdays Commands
 
     elif command == '/bday':
