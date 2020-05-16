@@ -56,8 +56,13 @@ def save_birthday(detail):
 def todaybday():
     result = birthdays.query.filter(extract('month', birthdays.birth_date) == datetime.date.today().month,
                                 extract('day', birthdays.birth_date) == datetime.date.today().day).all()
-    print(result[1].name)
-    # return(result)
+    if result != []:
+        birthday = "It's\n"
+        for person in result:
+            birthday = birthday + person.name +  "'s birthday\n"
+    else:
+        birthday = "Nothing Today"
+    return(birthday)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
