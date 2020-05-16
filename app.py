@@ -91,7 +91,7 @@ def random_quote():
                 db.session.query(func.count(quotes.id))
             )
             ).limit(1).all()
-    print(result.quote)
+    print(result)
     return(result.quote)
 
 def today_birthday():
