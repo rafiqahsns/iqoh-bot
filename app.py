@@ -129,7 +129,7 @@ def handle_text_message(event):
         else:
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=(bday+"\n"+events)
+                TextSendMessage(text=(bday+"\n"+events))
             )
 
     else:
